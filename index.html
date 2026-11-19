@@ -1,0 +1,1100 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="src/style.css">
+  <meta name="description"
+    content="CUDA presentation: definition, history, CPU vs GPU, architecture, interactive simulation, libraries, alternatives, advantages and limitations." />
+  <title>CUDA: Compute Unified Device Architecture | Presentation</title>
+</head>
+
+<body>
+  <div class="deck">
+    <div class="progress">
+      <div id="progress"></div>
+    </div>
+
+    <main class="stage" id="stage">
+
+      <!-- 1. TITLE -->
+      <section class="slide cover-slide" data-title="Title">
+        <div class="wrap">
+          <div class="cover">
+            <div>
+              <span class="pill">Parallel Computing · GPU Programming</span>
+              <h1>CUDA</h1>
+              <p class="lead" style="margin:14px 0 0;font-size:22px;font-weight:600;color:#334155">Compute Unified
+                Device Architecture</p>
+              <p class="sub">NVIDIA's parallel computing platform for general-purpose GPU programming</p>
+              <div class="names">
+                <div>
+                  <p class="label">Presented by</p>
+                  <p class="name">Messous Chabane</p>
+                  <p class="name">Hadjyahia Douaa</p>
+                </div>
+                <div>
+                  <p class="label">Supervised by</p>
+                  <p class="name">Dairi Abdelkader</p>
+                </div>
+              </div>
+            </div>
+            <div class="squares cover-art" data-gen="squares" data-count="64" style="--cols:8">
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2. OUTLINE -->
+      <section class="slide" data-title="Outline">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">Agenda</p>
+            <h2>Outline</h2>
+          </div>
+        </header>
+        <div class="wrap grid g3">
+          <div class="card toc" data-goto="3">
+            <p class="label">Section 01 · Page 3</p>
+            <h3>Definition</h3>
+          </div>
+          <div class="card toc" data-goto="4">
+            <p class="label">Section 02 · Page 4</p>
+            <h3>History</h3>
+          </div>
+          <div class="card toc" data-goto="5">
+            <p class="label">Section 03 · Pages 5-6</p>
+            <h3>CPU vs GPU</h3>
+          </div>
+          <div class="card toc" data-goto="7">
+            <p class="label">Section 04 · Pages 7-8</p>
+            <h3>Architecture and memory</h3>
+          </div>
+          <div class="card toc" data-goto="9">
+            <p class="label">Section 05 · Pages 9-12</p>
+            <h3>How CUDA works (interactive)</h3>
+          </div>
+          <div class="card toc" data-goto="13">
+            <p class="label">Section 06 · Page 13</p>
+            <h3>CUDA libraries</h3>
+          </div>
+          <div class="card toc" data-goto="14">
+            <p class="label">Section 07 · Pages 14-15</p>
+            <h3>Alternatives and comparison</h3>
+          </div>
+          <div class="card toc" data-goto="16">
+            <p class="label">Section 08 · Pages 16-17</p>
+            <h3>Advantages and limitations</h3>
+          </div>
+          <div class="card toc" data-goto="18">
+            <p class="label">Section 09 · Pages 18-19</p>
+            <h3>Conclusion and references</h3>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3. DEFINITION -->
+      <section class="slide" data-title="Definition">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">01 · Definition</p>
+            <h2>What is CUDA?</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g2">
+            <div>
+              <p class="lead"><b>CUDA</b> (Compute Unified Device Architecture) is a <b>parallel computing platform and
+                  programming model</b> created by <b>NVIDIA</b>.</p>
+              <p class="lead">It lets developers use the <b>GPU</b>, originally built for graphics, as a general-purpose
+                processor (GPGPU) that accelerates heavy computations.</p>
+              <ul class="bul" style="margin-top:14px">
+                <li>Runs on NVIDIA GPUs (GeForce, RTX, Tesla, A100, H100, Blackwell)</li>
+                <li>Extends C and C++ with keywords for kernels, memory and threads</li>
+                <li>Usable from Python (CuPy, Numba, PyTorch) and Fortran</li>
+                <li>Free toolkit: nvcc compiler, runtime, libraries and profilers</li>
+              </ul>
+            </div>
+            <div>
+              <p class="label">Software stack</p>
+              <div class="stack">
+                <div class="layer l1">Your application <small>C / C++ · Python · Fortran</small></div>
+                <div class="layer l2">CUDA-X libraries <small>cuBLAS · cuDNN · cuFFT · Thrust</small></div>
+                <div class="layer l3">CUDA Runtime and Driver API <small>cudaMalloc · cudaMemcpy · kernel launch</small>
+                </div>
+                <div class="layer l4">NVIDIA GPU driver <small>schedules work on the device</small></div>
+                <div class="layer l5">NVIDIA GPU hardware <small>SMs · CUDA cores · Tensor cores · VRAM</small></div>
+              </div>
+            </div>
+          </div>
+          <div class="grid g4" style="margin-top:22px">
+            <div class="stat"><b>2006</b><span>Announced by NVIDIA</span></div>
+            <div class="stat"><b>2007</b><span>CUDA 1.0 released</span></div>
+            <div class="stat"><b>C/C++</b><span>Core programming language</span></div>
+            <div class="stat"><b>1000s</b><span>Threads running in parallel</span></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 4. HISTORY -->
+      <section class="slide" data-title="History">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">02 · History</p>
+            <h2>History of CUDA</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="tl-grid">
+            <ol class="tl">
+              <li><span class="yr">2003</span>
+                <h3>Brook for GPUs</h3>
+                <p>Stanford researchers (led by Ian Buck) show that GPUs can run general-purpose computations through a
+                  streaming language.</p>
+              </li>
+              <li><span class="yr">2006</span>
+                <h3>G80 and CUDA announced</h3>
+                <p>NVIDIA GeForce 8800 GTX introduces a unified shader architecture. CUDA is announced alongside it.</p>
+              </li>
+              <li><span class="yr">2007</span>
+                <h3>CUDA 1.0</h3>
+                <p>First public toolkit with the nvcc compiler and a C-like language for writing GPU kernels.</p>
+              </li>
+              <li><span class="yr">2008</span>
+                <h3>Tesla GPUs</h3>
+                <p>Dedicated compute GPUs for scientific computing and high-performance computing (HPC) clusters.</p>
+              </li>
+              <li><span class="yr">2009</span>
+                <h3>OpenCL appears</h3>
+                <p>The Khronos Group releases OpenCL, an open, multi-vendor standard for heterogeneous parallel
+                  computing.</p>
+              </li>
+            </ol>
+            <ol class="tl">
+              <li><span class="yr">2010</span>
+                <h3>Fermi architecture</h3>
+                <p>Adds ECC memory, L1 and L2 caches and much stronger double-precision performance for HPC.</p>
+              </li>
+              <li><span class="yr">2012</span>
+                <h3>AlexNet on CUDA</h3>
+                <p>A deep CNN is trained on two GTX 580 GPUs with CUDA, starting the modern deep learning era.</p>
+              </li>
+              <li><span class="yr">2014</span>
+                <h3>cuDNN released</h3>
+                <p>Deep learning primitives adopted by Caffe, Torch and later TensorFlow and PyTorch.</p>
+              </li>
+              <li><span class="yr">2017</span>
+                <h3>Volta and Tensor Cores</h3>
+                <p>Dedicated matrix-multiply units (Tensor Cores) accelerate AI training and inference.</p>
+              </li>
+              <li><span class="yr">2020-2024</span>
+                <h3>Ampere, Hopper, Blackwell</h3>
+                <p>A100, H100 and B200 GPUs push transformer and large language model acceleration further.</p>
+              </li>
+            </ol>
+          </div>
+          <div class="banner">CUDA's success came from pairing GPU hardware innovation (Tensor Cores, HBM memory) with a
+            mature software ecosystem.</div>
+        </div>
+      </section>
+
+      <!-- 5. CPU vs GPU DESIGN -->
+      <section class="slide" data-title="CPU vs GPU design">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">03 · CPU vs GPU</p>
+            <h2>Design Philosophy</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g2">
+            <div class="card">
+              <p class="label" style="color:#0369a1">CPU: a few powerful cores</p>
+              <div class="grid g2" style="gap:10px">
+                <div class="cpu-core">
+                  <div class="cu">Control unit</div>
+                  <div class="ch">Large cache</div>
+                  <div class="alu">ALU</div>
+                </div>
+                <div class="cpu-core">
+                  <div class="cu">Control unit</div>
+                  <div class="ch">Large cache</div>
+                  <div class="alu">ALU</div>
+                </div>
+                <div class="cpu-core">
+                  <div class="cu">Control unit</div>
+                  <div class="ch">Large cache</div>
+                  <div class="alu">ALU</div>
+                </div>
+                <div class="cpu-core">
+                  <div class="cu">Control unit</div>
+                  <div class="ch">Large cache</div>
+                  <div class="alu">ALU</div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <p class="label" style="color:var(--nv-d)">GPU: thousands of small cores</p>
+              <div class="squares dense" data-gen="squares" data-count="128" style="--cols:16"></div>
+              <p class="note">Each small square = one CUDA core (illustrative).</p>
+            </div>
+          </div>
+          <div class="grid g2" style="margin-top:18px">
+            <div class="info c-sky">
+              <h3>CPU: latency-oriented</h3>
+              <ul class="bul">
+                <li>A few powerful cores (typically 4 to 64)</li>
+                <li>Large caches and sophisticated branch prediction</li>
+                <li>Excellent for sequential tasks, OS work and complex logic</li>
+              </ul>
+            </div>
+            <div class="info c-nv">
+              <h3>GPU: throughput-oriented</h3>
+              <ul class="bul">
+                <li>Thousands of simpler cores grouped into SMs</li>
+                <li>Hides memory delay by switching between many threads</li>
+                <li>Excellent for data-parallel work: matrices, images, neural networks</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 6. PERFORMANCE -->
+      <section class="slide" data-title="CPU vs GPU performance">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">03 · CPU vs GPU</p>
+            <h2>Performance Comparison</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g2">
+            <div class="card">
+              <p class="label">Peak FP32 compute</p>
+              <div class="bar-group">
+                <div class="bar">
+                  <div class="bar-top"><span>Typical high-end CPU</span><span>about 2 TFLOPS</span></div>
+                  <div class="bar-track">
+                    <div class="bar-fill f-sky" data-value="2"></div>
+                  </div>
+                </div>
+                <div class="bar">
+                  <div class="bar-top"><span>NVIDIA H100 GPU</span><span>about 67 TFLOPS</span></div>
+                  <div class="bar-track">
+                    <div class="bar-fill f-nv" data-value="67"></div>
+                  </div>
+                </div>
+              </div>
+              <p class="label" style="margin-top:22px">Memory bandwidth</p>
+              <div class="bar-group">
+                <div class="bar">
+                  <div class="bar-top"><span>Dual-channel DDR5 (CPU)</span><span>about 90 GB/s</span></div>
+                  <div class="bar-track">
+                    <div class="bar-fill f-sky" data-value="90"></div>
+                  </div>
+                </div>
+                <div class="bar">
+                  <div class="bar-top"><span>HBM3 memory (H100 GPU)</span><span>about 3350 GB/s</span></div>
+                  <div class="bar-track">
+                    <div class="bar-fill f-nv" data-value="3350"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Feature</th>
+                    <th style="color:#0369a1">CPU</th>
+                    <th style="color:var(--nv-d)">GPU</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Parallel units</td>
+                    <td>about 16 cores (desktop)</td>
+                    <td>about 16,896 CUDA cores (H100)</td>
+                  </tr>
+                  <tr>
+                    <td>Optimized for</td>
+                    <td>Low latency</td>
+                    <td>High throughput</td>
+                  </tr>
+                  <tr>
+                    <td>Control logic</td>
+                    <td>Complex</td>
+                    <td>Simple</td>
+                  </tr>
+                  <tr>
+                    <td>Cache per core</td>
+                    <td>Large</td>
+                    <td>Small</td>
+                  </tr>
+                  <tr>
+                    <td>Best workloads</td>
+                    <td>Sequential, branching</td>
+                    <td>Data-parallel, math-heavy</td>
+                  </tr>
+                  <tr>
+                    <td>Power</td>
+                    <td>Tens to hundreds of W</td>
+                    <td>Up to about 700 W (H100 SXM)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <p class="note">Approximate, illustrative figures: CPU = typical high-end desktop; GPU = NVIDIA H100 SXM
+            datasheet values. Actual numbers vary by model.</p>
+        </div>
+      </section>
+
+      <!-- 7. ARCHITECTURE -->
+      <section class="slide" data-title="CUDA architecture">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">04 · CUDA Architecture</p>
+            <h2>Hardware Architecture</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g2">
+            <div class="card">
+              <p class="label">GPU die (simplified)</p>
+              <div class="die" data-gen="die"></div>
+              <p class="note">Each small block = Streaming Multiprocessor (SM). Green squares = CUDA core groups. Not to
+                scale.</p>
+            </div>
+            <div>
+              <p class="label">Inside one Streaming Multiprocessor</p>
+              <div class="grid g2" style="gap:10px">
+                <div class="info c-nv">
+                  <h3>FP32 / INT32 cores</h3>
+                  <p>Execute arithmetic, one operation per thread.</p>
+                </div>
+                <div class="info c-violet">
+                  <h3>Tensor cores</h3>
+                  <p>Matrix multiply-accumulate units that accelerate AI.</p>
+                </div>
+                <div class="info c-sky">
+                  <h3>Warp schedulers</h3>
+                  <p>Issue one instruction to a group of 32 threads (a warp).</p>
+                </div>
+                <div class="info c-amber">
+                  <h3>Register file</h3>
+                  <p>Fastest private storage, one slice per thread.</p>
+                </div>
+                <div class="info c-rose">
+                  <h3>Shared memory and L1</h3>
+                  <p>Programmable on-chip memory shared by a block.</p>
+                </div>
+                <div class="info c-slate">
+                  <h3>Load/Store and SFU</h3>
+                  <p>Memory access units and special math (sin, rsqrt).</p>
+                </div>
+              </div>
+              <div class="banner" style="text-align:left;margin-top:14px"><b>SIMT execution:</b> threads are grouped
+                into warps of 32. All threads in a warp run the same instruction on different data.</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 8. MEMORY -->
+      <section class="slide" data-title="Memory hierarchy">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">04 · CUDA Architecture</p>
+            <h2>CUDA Memory Hierarchy</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g2">
+            <div>
+              <div class="pyr">
+                <div class="pyr-row m1" style="width:40%"><span>Registers <em>per thread</em></span><small>about 1
+                    cycle</small></div>
+                <div class="pyr-row m2" style="width:55%"><span>Shared memory <em>per block</em></span><small>about
+                    20-30 cycles</small></div>
+                <div class="pyr-row m3" style="width:70%"><span>L1 / L2 cache <em>per SM / whole
+                      GPU</em></span><small>about 30 / 200 cycles</small></div>
+                <div class="pyr-row m4" style="width:85%"><span>Global memory (VRAM / HBM) <em>whole
+                      GPU</em></span><small>about 400-800 cycles</small></div>
+                <div class="pyr-row m5" style="width:100%"><span>Host RAM (over PCIe) <em>CPU
+                      side</em></span><small>microseconds and up</small></div>
+              </div>
+              <p class="pyr-note">Faster and smaller at the top; larger and slower at the bottom. Latencies are
+                approximate, in GPU clock cycles.</p>
+            </div>
+            <div style="display:grid;gap:14px;align-content:start">
+              <div class="info c-nv">
+                <h3>Why it matters</h3>
+                <p>Most CUDA tuning moves data into faster memory: coalesced global memory access, tiling in shared
+                  memory, and avoiding slow PCIe transfers.</p>
+              </div>
+              <div class="info c-sky">
+                <h3>Rule of thumb</h3>
+                <p>Keep data on the GPU as long as possible and reuse it many times before writing results back.</p>
+              </div>
+              <div class="info c-amber">
+                <h3>Scope</h3>
+                <p>Each memory level is visible to a different set of threads: a thread, a block, or the whole grid.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 9. THREAD HIERARCHY -->
+      <section class="slide" data-title="Thread hierarchy">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">05 · How CUDA Works</p>
+            <h2>Thread Hierarchy: Grid, Block, Thread</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g3">
+            <div class="info c-sky">
+              <h3>Grid</h3>
+              <p>All blocks launched by one kernel call.</p>
+            </div>
+            <div class="info c-violet">
+              <h3>Block</h3>
+              <p>A group of threads that share shared memory and can synchronize.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Thread</h3>
+              <p>One kernel instance with its own threadIdx and registers.</p>
+            </div>
+          </div>
+
+          <div class="card" id="threadDemo" style="margin-top:18px">
+            <p class="label">Interactive: change N and the block size</p>
+            <div class="ctrl">
+              <label style="display:flex;align-items:center;gap:10px;font-weight:600">Number of elements N: <b
+                  id="tgNOut" style="color:var(--nv-d)">20</b>
+                <input type="range" id="tgN" min="4" max="64" value="20" />
+              </label>
+              <div class="ctrl" id="tgBlock">
+                <span style="font-weight:600">Threads per block:</span>
+                <button class="btn" data-t="4">4</button>
+                <button class="btn on" data-t="8">8</button>
+                <button class="btn" data-t="16">16</button>
+                <button class="btn" data-t="32">32</button>
+              </div>
+            </div>
+            <div class="grid g3" style="margin-top:14px">
+              <div class="stat"><b id="tgBlocks">3</b><span>Blocks = ceil(N / blockDim)</span></div>
+              <div class="stat"><b id="tgThreads">24</b><span>Threads launched</span></div>
+              <div class="stat"><b id="tgIdle">4</b><span>Idle threads (guarded by i &lt; N)</span></div>
+            </div>
+            <div class="tfield" id="tgField"></div>
+            <p class="note">Green = thread that processes element i = blockIdx.x * blockDim.x + threadIdx.x. Gray = idle
+              thread.</p>
+          </div>
+
+          <div class="card" style="margin-top:18px">
+            <p class="label">Interactive: one warp of 32 threads (SIMT)</p>
+            <div class="ctrl">
+              <button class="btn" id="warpUni">Uniform branch</button>
+              <button class="btn" id="warpDiv">Divergent branch (even / odd)</button>
+              <span class="note" id="warpStatus" style="margin:0;text-align:left">Press a button to run one warp.</span>
+            </div>
+            <div class="warp" id="warp" style="margin-top:14px"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 10. WORKFLOW -->
+      <section class="slide" data-title="How a CUDA program runs">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">05 · How CUDA Works</p>
+            <h2>How a CUDA Program Runs</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="steps" id="wfSteps"></div>
+          <div class="wf-main" style="margin-top:18px">
+            <div class="card" style="display:grid;gap:16px;align-content:start">
+              <div class="wf-flow">
+                <div class="box" id="wfHost"><b>Host</b><span>CPU + system RAM</span></div>
+                <div class="wf-track" id="wfTrack">
+                  <div class="line"></div>
+                  <div class="wf-label" id="wfArrowLbl">PCIe copy</div>
+                  <div class="pk" id="wfPk"></div>
+                </div>
+                <div class="box" id="wfDevice"><b>Device</b><span>GPU + VRAM</span></div>
+              </div>
+              <div class="info c-sky">
+                <h3>Host</h3>
+                <p>The CPU and system RAM. It runs the main program and controls execution.</p>
+              </div>
+              <div class="info c-nv">
+                <h3>Device</h3>
+                <p>The GPU and its VRAM. It runs the kernels in parallel across thousands of threads.</p>
+              </div>
+              <div><button class="btn primary" id="wfPlay">Auto-play</button></div>
+            </div>
+            <div class="code-win">
+              <div class="code-bar"><i style="background:#fb7185"></i><i style="background:#fbbf24"></i><i
+                  style="background:#34d399"></i><span>current API call</span></div>
+              <pre class="code" id="wfCode"></pre>
+              <p class="wf-text" id="wfText"></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 11. LIVE SIMULATOR -->
+      <section class="slide" data-title="Live simulator">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">05 · How CUDA Works · Interactive</p>
+            <h2>Live Simulator: Vector Addition on the GPU</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="card">
+            <div class="sim-ctrl">
+              <label>Elements N
+                <select id="simN">
+                  <option>16</option>
+                  <option selected>32</option>
+                  <option>64</option>
+                </select>
+              </label>
+              <label>Threads per block
+                <select id="simT">
+                  <option>4</option>
+                  <option selected>8</option>
+                  <option>16</option>
+                </select>
+              </label>
+              <label>Speed <input id="simSpeed" type="range" min="1" max="5" value="3" /></label>
+              <button class="btn primary" id="simRun">Run kernel</button>
+              <button class="btn" id="simReset">Reset</button>
+            </div>
+
+            <ol class="phases" id="simPhases">
+              <li>1 · cudaMalloc</li>
+              <li>2 · Copy host to device</li>
+              <li>3 · Launch kernel</li>
+              <li>4 · Execute on SMs</li>
+              <li>5 · Copy device to host</li>
+              <li>6 · Free and verify</li>
+            </ol>
+
+            <div class="sim-main">
+              <div>
+                <div class="panel host">
+                  <h4>Host RAM (CPU)</h4>
+                  <div class="row"><span>h_a</span>
+                    <div class="arr" id="hA"></div>
+                  </div>
+                  <div class="row"><span>h_b</span>
+                    <div class="arr" id="hB"></div>
+                  </div>
+                  <div class="row"><span>h_c</span>
+                    <div class="arr" id="hC"></div>
+                  </div>
+                </div>
+                <div class="bus" id="simBus">
+                  <div class="rail"></div>
+                  <div class="pk" id="simPk"></div><span>PCIe bus (CPU to GPU)</span>
+                </div>
+                <div class="panel dev">
+                  <h4>Device VRAM (GPU)</h4>
+                  <div class="row"><span>d_a</span>
+                    <div class="arr" id="dA"></div>
+                  </div>
+                  <div class="row"><span>d_b</span>
+                    <div class="arr" id="dB"></div>
+                  </div>
+                  <div class="row"><span>d_c</span>
+                    <div class="arr" id="dC"></div>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <p class="label">Streaming multiprocessors (compute)</p>
+                <div class="sm-grid-main" id="smGrid"></div>
+                <div class="log" id="simLog"></div>
+              </div>
+            </div>
+            <p class="note">Values: a[i] = i and b[i] = 2i, so c[i] = 3i. Each block of threads handles consecutive
+              elements. With 4 SMs and 2 block slots each, up to 8 blocks run at once, so more blocks means more waves.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 12. CODE -->
+      <section class="slide" data-title="Code example">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">05 · How CUDA Works</p>
+            <h2>Example: Vector Addition in CUDA</h2>
+          </div>
+        </header>
+        <div class="wrap code-layout">
+          <div style="display:grid;gap:16px">
+            <div class="code-win">
+              <div class="code-bar"><i style="background:#fb7185"></i><i style="background:#fbbf24"></i><i
+                  style="background:#34d399"></i><span>vector_add.cu</span></div>
+              <pre class="code">#include &lt;stdio.h&gt;
+#include &lt;cuda_runtime.h&gt;
+
+// Kernel: runs on the GPU, one thread per array element
+__global__ void vectorAdd(const float *a, const float *b, float *c, int n) {
+    int i = blockIdx.x * blockDim.x + threadIdx.x;   // global thread index
+    if (i &lt; n) c[i] = a[i] + b[i];
+}
+
+int main() {
+    const int n = 1 &lt;&lt; 20;                        // 1,048,576 elements
+    size_t bytes = n * sizeof(float);
+
+    // 1) Host (CPU) buffers
+    float *h_a = (float*)malloc(bytes);
+    float *h_b = (float*)malloc(bytes);
+    float *h_c = (float*)malloc(bytes);
+    for (int i = 0; i &lt; n; i++) { h_a[i] = 1.0f; h_b[i] = 2.0f; }
+
+    // 2) Device (GPU) buffers
+    float *d_a, *d_b, *d_c;
+    cudaMalloc(&amp;d_a, bytes);
+    cudaMalloc(&amp;d_b, bytes);
+    cudaMalloc(&amp;d_c, bytes);
+
+    // 3) Copy inputs CPU to GPU
+    cudaMemcpy(d_a, h_a, bytes, cudaMemcpyHostToDevice);
+    cudaMemcpy(d_b, h_b, bytes, cudaMemcpyHostToDevice);
+
+    // 4) Launch kernel: 4096 blocks x 256 threads
+    int threads = 256;
+    int blocks  = (n + threads - 1) / threads;
+    vectorAdd&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;(d_a, d_b, d_c, n);
+
+    // 5) Copy result GPU to CPU and clean up
+    cudaMemcpy(h_c, d_c, bytes, cudaMemcpyDeviceToHost);
+    printf("c[0] = %f\n", h_c[0]);               // expected: 3.000000
+
+    cudaFree(d_a); cudaFree(d_b); cudaFree(d_c);
+    free(h_a); free(h_b); free(h_c);
+    return 0;
+}</pre>
+            </div>
+            <div class="code-win">
+              <div class="code-bar"><i style="background:#fb7185"></i><i style="background:#fbbf24"></i><i
+                  style="background:#34d399"></i><span>terminal</span></div>
+              <pre class="code">nvcc vector_add.cu -o vector_add
+./vector_add</pre>
+            </div>
+          </div>
+          <div style="display:grid;gap:12px;align-content:start">
+            <div class="info c-nv">
+              <h3>__global__</h3>
+              <p>Marks a kernel: a function called from the CPU and executed on the GPU.</p>
+            </div>
+            <div class="info c-sky">
+              <h3>&lt;&lt;&lt;blocks, threads&gt;&gt;&gt;</h3>
+              <p>The execution configuration: how many blocks and threads run the kernel.</p>
+            </div>
+            <div class="info c-violet">
+              <h3>Built-in indices</h3>
+              <p><b>blockIdx</b>, <b>blockDim</b> and <b>threadIdx</b> give each thread its unique position in the data.
+              </p>
+            </div>
+            <div class="info c-amber">
+              <h3>Memory API</h3>
+              <p><b>cudaMalloc</b>, <b>cudaMemcpy</b> and <b>cudaFree</b> mirror C's malloc, memcpy and free, but for
+                GPU memory.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 13. LIBRARIES -->
+      <section class="slide" data-title="CUDA libraries">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">06 · CUDA-X Libraries</p>
+            <h2>Popular CUDA Libraries</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g3">
+            <div class="info c-nv">
+              <h3>cuBLAS</h3>
+              <p>GPU-accelerated Basic Linear Algebra Subprograms: fast matrix and vector operations.</p>
+            </div>
+            <div class="info c-sky">
+              <h3>cuFFT</h3>
+              <p>Fast Fourier Transforms for signal processing, imaging and scientific simulation.</p>
+            </div>
+            <div class="info c-violet">
+              <h3>cuDNN</h3>
+              <p>Deep neural network primitives (convolution, attention, normalization). Used by PyTorch and TensorFlow.
+              </p>
+            </div>
+            <div class="info c-amber">
+              <h3>cuSPARSE</h3>
+              <p>Operations on sparse matrices, common in graphs, physics and recommender systems.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>cuSOLVER</h3>
+              <p>Dense and sparse direct solvers, eigenvalues and matrix factorizations.</p>
+            </div>
+            <div class="info c-slate">
+              <h3>cuRAND</h3>
+              <p>High-throughput random number generation for Monte Carlo and simulation.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Thrust</h3>
+              <p>C++ parallel algorithms (sort, scan, reduce) with an STL-like interface.</p>
+            </div>
+            <div class="info c-sky">
+              <h3>NCCL</h3>
+              <p>Multi-GPU and multi-node collective communication (all-reduce, broadcast) for training.</p>
+            </div>
+            <div class="info c-violet">
+              <h3>TensorRT</h3>
+              <p>Optimizer and runtime that makes trained deep learning models fast for inference.</p>
+            </div>
+          </div>
+          <p class="note" style="font-size:14px">Most deep learning frameworks (PyTorch, TensorFlow, JAX) call these
+            libraries under the hood.</p>
+        </div>
+      </section>
+
+      <!-- 14. ALTERNATIVES -->
+      <section class="slide" data-title="Alternatives to CUDA">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">07 · Alternatives</p>
+            <h2>Alternatives to CUDA</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g3">
+            <div class="info c-sky">
+              <h3>OpenCL (Khronos, 2009)</h3>
+              <p>Open standard running on CPUs, GPUs and FPGAs from many vendors. Portable but more verbose.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>AMD ROCm / HIP</h3>
+              <p>Open-source GPU platform for AMD. HIP has CUDA-like C++ syntax, and hipify translates CUDA code.</p>
+            </div>
+            <div class="info c-sky">
+              <h3>SYCL / Intel oneAPI (DPC++)</h3>
+              <p>Single-source modern C++ for heterogeneous hardware, with backends for Intel, NVIDIA and AMD.</p>
+            </div>
+            <div class="info c-violet">
+              <h3>Vulkan Compute / DirectCompute</h3>
+              <p>Compute shaders built on graphics APIs. Cross-platform, closely tied to graphics pipelines.</p>
+            </div>
+            <div class="info c-amber">
+              <h3>OpenACC / OpenMP offload</h3>
+              <p>Directive-based: pragmas on loops let the compiler generate GPU code. Less effort, less control.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>OpenAI Triton</h3>
+              <p>Python-based language for writing tiled GPU kernels, targeting NVIDIA and AMD GPUs.</p>
+            </div>
+            <div class="info c-slate">
+              <h3>Apple Metal</h3>
+              <p>Apple's low-level GPU API for macOS and iOS devices, including Apple silicon.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 15. COMPARISON -->
+      <section class="slide" data-title="CUDA vs alternatives">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">07 · Alternatives</p>
+            <h2>CUDA vs Its Alternatives</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Criterion</th>
+                  <th style="color:var(--nv-d)">CUDA</th>
+                  <th>OpenCL</th>
+                  <th>ROCm / HIP</th>
+                  <th>SYCL (oneAPI)</th>
+                  <th>Triton</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Hardware vendor</td>
+                  <td class="hl">NVIDIA only</td>
+                  <td>Multi-vendor</td>
+                  <td>AMD (HIP also NVIDIA)</td>
+                  <td>Multi-vendor</td>
+                  <td>NVIDIA and AMD</td>
+                </tr>
+                <tr>
+                  <td>Main languages</td>
+                  <td class="hl">C/C++, Python, Fortran</td>
+                  <td>C99 kernels</td>
+                  <td>C++ (HIP)</td>
+                  <td>Modern C++</td>
+                  <td>Python</td>
+                </tr>
+                <tr>
+                  <td>Ecosystem and libraries</td>
+                  <td class="hl"><span class="dots" data-v="5"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="4"></span></td>
+                </tr>
+                <tr>
+                  <td>Portability</td>
+                  <td class="hl"><span class="dots" data-v="1"></span></td>
+                  <td><span class="dots" data-v="5"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="5"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                </tr>
+                <tr>
+                  <td>Ease of programming</td>
+                  <td class="hl"><span class="dots" data-v="4"></span></td>
+                  <td><span class="dots" data-v="2"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="4"></span></td>
+                </tr>
+                <tr>
+                  <td>Low-level control</td>
+                  <td class="hl"><span class="dots" data-v="5"></span></td>
+                  <td><span class="dots" data-v="4"></span></td>
+                  <td><span class="dots" data-v="4"></span></td>
+                  <td><span class="dots" data-v="4"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                </tr>
+                <tr>
+                  <td>Tooling and debugging</td>
+                  <td class="hl"><span class="dots" data-v="5"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                  <td><span class="dots" data-v="3"></span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="grid g3" style="margin-top:18px">
+            <div class="info c-nv">
+              <h3>Choose CUDA when</h3>
+              <p>You need top performance on NVIDIA hardware and the richest libraries.</p>
+            </div>
+            <div class="info c-sky">
+              <h3>Choose OpenCL or SYCL when</h3>
+              <p>You must run the same code on several vendors' hardware.</p>
+            </div>
+            <div class="info c-violet">
+              <h3>Choose Triton or HIP when</h3>
+              <p>You write custom AI kernels quickly, or you target AMD GPUs.</p>
+            </div>
+          </div>
+          <p class="note">Dots rate each criterion from 1 (weak) to 5 (strong). The ratings are a qualitative,
+            subjective assessment.</p>
+        </div>
+      </section>
+
+      <!-- 16. ADVANTAGES -->
+      <section class="slide" data-title="Advantages of CUDA">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">08 · Assessment</p>
+            <h2>Advantages of CUDA</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="grid g3">
+            <div class="info c-nv">
+              <h3>Massive parallel speed</h3>
+              <p>Thousands of cores execute data-parallel work; often 10 to 100 times faster than CPUs on suitable
+                workloads.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Rich library ecosystem</h3>
+              <p>cuBLAS, cuDNN, NCCL and more give near-peak performance without low-level code.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Mature tooling</h3>
+              <p>Nsight Systems and Compute profilers, cuda-gdb debugger and compute-sanitizer for memory errors.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Documentation and community</h3>
+              <p>Extensive official guides, textbooks, courses and a very large developer community.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Fine-grained control</h3>
+              <p>Direct access to the memory hierarchy, warps, streams and Tensor Cores for expert tuning.</p>
+            </div>
+            <div class="info c-nv">
+              <h3>Scales out</h3>
+              <p>NVLink, multi-GPU programming and NCCL scale applications from one GPU to large clusters.</p>
+            </div>
+          </div>
+          <div class="banner">Result: CUDA is the default platform for deep learning and HPC on NVIDIA hardware.</div>
+        </div>
+      </section>
+
+      <!-- 17. LIMITATIONS -->
+      <section class="slide" data-title="Limitations of CUDA">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">08 · Assessment</p>
+            <h2>Limitations of CUDA</h2>
+          </div>
+        </header>
+        <div class="wrap split">
+          <div class="grid g2">
+            <div class="info c-rose">
+              <h3>Vendor lock-in</h3>
+              <p>Runs only on NVIDIA GPUs. Code is not portable to AMD or Intel hardware.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>Steep learning curve</h3>
+              <p>Developers must understand threads, blocks, warps, memory spaces and synchronization.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>Data-transfer overhead</h3>
+              <p>Moving data between CPU and GPU over PCIe is slow and can erase the speedup.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>Not for every workload</h3>
+              <p>Branch-heavy or irregular code causes warp divergence and idle threads.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>Memory, cost and power</h3>
+              <p>Limited VRAM for very large models. High-end GPUs are expensive and power-hungry.</p>
+            </div>
+            <div class="info c-rose">
+              <h3>Hard to debug</h3>
+              <p>Race conditions and asynchronous execution make parallel bugs difficult to find.</p>
+            </div>
+          </div>
+          <div class="card" style="align-content:start">
+            <p class="label">The data-movement bottleneck (GB/s)</p>
+            <div class="bar-group">
+              <div class="bar">
+                <div class="bar-top"><span>GPU memory: HBM3 (H100)</span><span>3350</span></div>
+                <div class="bar-track">
+                  <div class="bar-fill f-nv" data-value="3350"></div>
+                </div>
+              </div>
+              <div class="bar">
+                <div class="bar-top"><span>CPU RAM: dual-channel DDR5</span><span>90</span></div>
+                <div class="bar-track">
+                  <div class="bar-fill f-sky" data-value="90"></div>
+                </div>
+              </div>
+              <div class="bar">
+                <div class="bar-top"><span>PCIe 5.0 x16 (CPU to GPU)</span><span>64</span></div>
+                <div class="bar-track">
+                  <div class="bar-fill f-rose" data-value="64"></div>
+                </div>
+              </div>
+            </div>
+            <p class="banner" style="margin-top:14px;background:#fff1f2;border-color:#fecdd3;color:#881337">The PCIe
+              link is roughly 50 times slower than on-GPU memory, so good CUDA code keeps data on the GPU.</p>
+            <p class="note">Approximate theoretical peak values.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- 18. CONCLUSION -->
+      <section class="slide" data-title="Conclusion">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">09 · Conclusion</p>
+            <h2>Conclusion</h2>
+          </div>
+        </header>
+        <div class="wrap grid g2" style="align-items:start">
+          <ul class="bul">
+            <li><b>CUDA</b> turned the GPU from a graphics chip into a general-purpose parallel processor.</li>
+            <li>Its core model (<b>kernels, threads, blocks and the memory hierarchy</b>) maps well to data-parallel
+              problems.</li>
+            <li>A rich <b>library ecosystem</b> (cuBLAS, cuDNN, NCCL) made CUDA the backbone of modern AI and HPC.</li>
+            <li>The main trade-off is <b>performance and maturity versus vendor lock-in</b>.</li>
+            <li>Open alternatives (OpenCL, SYCL, ROCm/HIP, Triton) are growing and are worth evaluating for portability.
+            </li>
+          </ul>
+          <div class="takeaway">
+            <p class="label" style="color:var(--nv)">Key takeaway</p>
+            <p class="quote">CUDA made the GPU a general-purpose parallel computer, and it became the foundation of
+              modern AI and scientific computing.</p>
+            <div class="grid g3" style="gap:10px">
+              <div class="tk"><b>2006</b><span>Origin</span></div>
+              <div class="tk"><b>SIMT</b><span>Execution model</span></div>
+              <div class="tk"><b>AI + HPC</b><span>Impact</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 19. REFERENCES -->
+      <section class="slide" data-title="References">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">09 · Bibliography</p>
+            <h2>References</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <ol class="refs grid g2">
+            <li>NVIDIA, <i>CUDA C++ Programming Guide</i>, NVIDIA Developer Documentation. Available:
+              docs.nvidia.com/cuda/cuda-c-programming-guide</li>
+            <li>J. Nickolls, I. Buck, M. Garland, and K. Skadron, "Scalable Parallel Programming with CUDA," <i>ACM
+                Queue</i>, vol. 6, no. 2, pp. 40-53, 2008.</li>
+            <li>E. Lindholm, J. Nickolls, S. Oberman, and J. Montrym, "NVIDIA Tesla: A Unified Graphics and Computing
+              Architecture," <i>IEEE Micro</i>, vol. 28, no. 2, pp. 39-55, 2008.</li>
+            <li>D. B. Kirk and W. W. Hwu, <i>Programming Massively Parallel Processors: A Hands-on Approach</i>, 4th ed.
+              Morgan Kaufmann, 2022.</li>
+            <li>J. Sanders and E. Kandrot, <i>CUDA by Example: An Introduction to General-Purpose GPU Programming</i>.
+              Addison-Wesley, 2010.</li>
+            <li>A. Krizhevsky, I. Sutskever, and G. E. Hinton, "ImageNet Classification with Deep Convolutional Neural
+              Networks," in <i>Advances in Neural Information Processing Systems (NeurIPS)</i>, 2012.</li>
+            <li>Khronos Group, <i>The OpenCL Specification</i>. Available: khronos.org/opencl</li>
+            <li>AMD, <i>ROCm Documentation</i>. Available: rocm.docs.amd.com</li>
+            <li>Intel, <i>oneAPI DPC++/SYCL Programming Guide</i>. Available: intel.com/oneapi</li>
+            <li>P. Tillet, H.-T. Kung, and D. Cox, "Triton: An Intermediate Language and Compiler for Tiled Neural
+              Network Computations," in <i>Proc. MAPL Workshop</i>, 2019.</li>
+            <li>NVIDIA, <i>cuDNN and cuBLAS Developer Documentation</i>. Available: developer.nvidia.com</li>
+            <li>NVIDIA, <i>NVIDIA H100 Tensor Core GPU Datasheet</i>. Available: nvidia.com/data-center</li>
+          </ol>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="foot">
+      <button class="btn" id="prev">&larr; Previous</button>
+      <div id="dots"></div>
+      <div class="foot-right">
+        <span id="counter">01 / 19</span>
+        <button class="btn primary" id="next">Next &rarr;</button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="src/main.js"></script>
+</body>
+
+</html>
