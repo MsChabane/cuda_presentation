@@ -92,7 +92,9 @@ const total = slides.length;
 let current = 0;
 
 function show(i) {
+	console.log("show", i);
 	current = Math.max(0, Math.min(total - 1, i));
+
 	slides.forEach((s, k) => s.classList.toggle("active", k === current));
 	$$("#dots button").forEach((b, k) =>
 		b.classList.toggle("active", k === current),
@@ -914,40 +916,6 @@ function initReleaseTimeline() {
 	selectRelease("13.5");
 }
 
-/* Full reference list: one row per major version, with every release and its month and year */
-function initVersionTable() {
-	const box = $("#verTable");
-	const majors = [...new Set(RELEASES.map((r) => r.major))];
-	majors.forEach((major) => {
-		const items = RELEASES.filter((r) => r.major === major);
-		const first = items[0].year;
-		const last = items[items.length - 1].year;
-		const span = first === last ? String(first) : `${first} to ${last}`;
-
-		const fam = make("div", "ver-fam");
-		fam.append(
-			make("b", "", `CUDA ${major}.x`),
-			make("span", "", `${span} · ${plural(items.length, "release")}`),
-		);
-
-		const chipBox = make("div", "ver-chips");
-		items.forEach((r) => {
-			const chip = make("span", `vc ${r.era.cls}`);
-			chip.title = r.note || `Minor update in the ${r.major}.x series`;
-			chip.append(
-				make("b", "", r.v),
-				document.createTextNode(` ${MONTHS[r.month - 1]} ${r.year}`),
-			);
-			chipBox.appendChild(chip);
-		});
-
-		const row = make("div", "ver-row");
-		row.append(fam, chipBox);
-		box.appendChild(row);
-	});
-	$("#verTotal").textContent = RELEASES.length;
-}
-
 /* ================= Boot ================= */
 genSquares();
 genDie();
@@ -959,5 +927,5 @@ initWarp();
 initWorkflow();
 initSimulator();
 initReleaseTimeline();
-initVersionTable();
+
 show(0);
