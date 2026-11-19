@@ -1,5 +1,3 @@
-//import "./style.css";
-
 /* ================= Helpers ================= */
 const $ = (sel, root = document) => root.querySelector(sel);
 const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
@@ -133,6 +131,12 @@ function initNav() {
 
 	document.addEventListener("keydown", (e) => {
 		if (e.target.closest && e.target.closest("input, select, textarea")) return;
+		if (
+			e.target.closest &&
+			e.target.closest("button") &&
+			(e.key === " " || e.key === "Enter")
+		)
+			return;
 		if (e.altKey || e.ctrlKey || e.metaKey) return;
 		switch (e.key) {
 			case "ArrowRight":
@@ -598,6 +602,352 @@ function initSimulator() {
 	build();
 }
 
+/* ================= CUDA release history ================= */
+const MONTHS = [
+	"Jan",
+	"Feb",
+	"Mar",
+	"Apr",
+	"May",
+	"Jun",
+	"Jul",
+	"Aug",
+	"Sep",
+	"Oct",
+	"Nov",
+	"Dec",
+];
+const MONTHS_LONG = [
+	"January",
+	"February",
+	"March",
+	"April",
+	"May",
+	"June",
+	"July",
+	"August",
+	"September",
+	"October",
+	"November",
+	"December",
+];
+const plural = (n, word) => `${n} ${word}${n === 1 ? "" : "s"}`;
+
+/* GPU generations targeted by each group of toolkit versions */
+const ERAS = [
+	{ min: 1, max: 4, cls: "era-1", name: "Tesla and Fermi" },
+	{ min: 5, max: 7, cls: "era-2", name: "Kepler and Maxwell" },
+	{ min: 8, max: 10, cls: "era-3", name: "Pascal, Volta and Turing" },
+	{ min: 11, max: 11, cls: "era-4", name: "Ampere" },
+	{ min: 12, max: 13, cls: "era-5", name: "Hopper and Blackwell" },
+];
+
+/* Every major.minor CUDA Toolkit release with its release month (NVIDIA CUDA Toolkit Archive).
+   Patch "Update" releases are not listed. Notes are checked against NVIDIA release notes and blog posts. */
+const RAW_RELEASES = [
+	{
+		v: "1.0",
+		d: "2007-06",
+		note: "First CUDA toolkit: a C-like language, the nvcc compiler and runtime and driver APIs for G80 GPUs (GeForce 8800). The first public SDK appeared in February 2007.",
+	},
+	{
+		v: "1.1",
+		d: "2007-12",
+		note: "Adds 32-bit atomic operations on global memory, so many threads can safely update the same value.",
+	},
+	{
+		v: "2.0",
+		d: "2008-08",
+		note: "Adds double-precision (64-bit) arithmetic on GT200 GPUs, plus Windows Vista and Mac OS X support.",
+	},
+	{ v: "2.1", d: "2009-01" },
+	{ v: "2.2", d: "2009-05" },
+	{ v: "2.3", d: "2009-06" },
+	{
+		v: "3.0",
+		d: "2010-03",
+		note: "Adds support for Fermi GPUs (ECC memory, concurrent kernels) and C++ class and template inheritance.",
+	},
+	{ v: "3.1", d: "2010-06" },
+	{ v: "3.2", d: "2010-11" },
+	{
+		v: "4.0",
+		d: "2011-05",
+		note: "Adds Unified Virtual Addressing, giving CPU and GPU memory one shared address space.",
+	},
+	{ v: "4.1", d: "2012-01" },
+	{ v: "4.2", d: "2012-04" },
+	{
+		v: "5.0",
+		d: "2012-10",
+		note: "Adds Dynamic Parallelism on Kepler GK110 GPUs, so a GPU kernel can launch other kernels.",
+	},
+	{ v: "5.5", d: "2013-07" },
+	{
+		v: "6.0",
+		d: "2014-04",
+		note: "Adds Unified Memory: one pointer that works on both CPU and GPU, with data moved automatically.",
+	},
+	{ v: "6.5", d: "2014-08" },
+	{
+		v: "7.0",
+		d: "2015-03",
+		note: "Adds C++11 support (auto and lambda), the cuSOLVER library and runtime compilation.",
+	},
+	{ v: "7.5", d: "2015-09" },
+	{
+		v: "8.0",
+		d: "2016-09",
+		note: "Adds Pascal GPUs (Tesla P100), NVLink, FP16 and INT8 arithmetic, and the nvGRAPH library.",
+	},
+	{
+		v: "9.0",
+		d: "2017-09",
+		note: "Adds Volta GPUs (Tesla V100) with Tensor Cores, and the Cooperative Groups programming model.",
+	},
+	{ v: "9.1", d: "2017-12" },
+	{ v: "9.2", d: "2018-05" },
+	{
+		v: "10.0",
+		d: "2018-09",
+		note: "Adds Turing GPUs (RTX 20 series) with Tensor Cores, the CUDA Graphs task model and the nvJPEG library.",
+	},
+	{ v: "10.1", d: "2019-02" },
+	{
+		v: "10.2",
+		d: "2019-11",
+		note: "The last CUDA release with macOS support.",
+	},
+	{
+		v: "11.0",
+		d: "2020-06",
+		note: "Adds Ampere GPUs (A100) and Multi-Instance GPU (MIG), which splits one GPU into isolated instances.",
+	},
+	{
+		v: "11.1",
+		d: "2020-09",
+		note: "Adds support for GeForce RTX 30 series GPUs.",
+	},
+	{
+		v: "11.2",
+		d: "2020-12",
+		note: "Adds the stream-ordered memory allocator (cudaMallocAsync and cudaFreeAsync).",
+	},
+	{ v: "11.3", d: "2021-04" },
+	{ v: "11.4", d: "2021-06" },
+	{ v: "11.5", d: "2021-10" },
+	{ v: "11.6", d: "2022-01" },
+	{ v: "11.7", d: "2022-05" },
+	{
+		v: "11.8",
+		d: "2022-10",
+		note: "Adds Ada Lovelace (sm_89) and Hopper (sm_90) GPU support.",
+	},
+	{
+		v: "12.0",
+		d: "2022-12",
+		note: "Starts CUDA 12 with Hopper (H100) features such as thread block clusters and the Tensor Memory Accelerator.",
+	},
+	{ v: "12.1", d: "2023-02" },
+	{ v: "12.2", d: "2023-06" },
+	{ v: "12.3", d: "2023-10" },
+	{ v: "12.4", d: "2024-03" },
+	{ v: "12.5", d: "2024-05" },
+	{ v: "12.6", d: "2024-08" },
+	{
+		v: "12.8",
+		d: "2025-01",
+		note: "First CUDA release with native Blackwell support (compute capabilities 10.0 and 12.0).",
+	},
+	{ v: "12.9", d: "2025-05" },
+	{
+		v: "13.0",
+		d: "2025-08",
+		note: "Unifies the Arm toolkit and removes offline compilation for pre-Turing GPUs (Maxwell, Pascal and Volta).",
+	},
+	{
+		v: "13.1",
+		d: "2025-12",
+		note: "Introduces CUDA Tile, a tile-based programming model with cuTile Python. The driver is no longer bundled on Windows.",
+	},
+	{
+		v: "13.2",
+		d: "2026-03",
+		note: "Extends CUDA Tile to Ampere and Ada GPUs, and cuTile Python becomes installable from PyPI.",
+	},
+	{
+		v: "13.3",
+		d: "2026-05",
+		note: "Introduces CUDA Tile C++, and adds C++23 support in NVCC and NVRTC.",
+	},
+	{
+		v: "13.4",
+		d: "2026-07",
+		note: "Developer preview. The NVIDIA driver is no longer bundled with the toolkit on Linux.",
+	},
+	{
+		v: "13.5",
+		d: "2026-11",
+		note: "Newest release in this list: PTX ISA 9.5, a precompile option in nvprune, and new CCCL 3.5 algorithms.",
+	},
+];
+
+const RELEASES = RAW_RELEASES.map((r) => {
+	const [year, month] = r.d.split("-").map(Number);
+	const major = Number(r.v.split(".")[0]);
+	return {
+		...r,
+		year,
+		month,
+		major,
+		era: ERAS.find((e) => major >= e.min && major <= e.max),
+	};
+});
+
+const monthsBetween = (a, b) => (b.year - a.year) * 12 + (b.month - a.month);
+
+/* Interactive year chart: one column per year, a chip per release */
+function initReleaseTimeline() {
+	const FIRST = 2007;
+	const LAST = 2026;
+	const chart = $("#rtChart");
+	const detail = $("#rtDetail");
+	const slider = $("#rtYear");
+	const playBtn = $("#rtPlay");
+	const chips = new Map();
+	const columns = new Map();
+	let timer = null;
+
+	for (let y = FIRST; y <= LAST; y++) {
+		const col = make("div", "rt-col");
+		const stack = make("div", "rt-stack");
+		RELEASES.filter((r) => r.year === y).forEach((r) => {
+			const chip = make("button", `rt-chip ${r.era.cls}`, r.v);
+			chip.type = "button";
+			chip.title = `CUDA ${r.v}, ${MONTHS_LONG[r.month - 1]} ${r.year}`;
+			chip.addEventListener("click", () => selectRelease(r.v));
+			stack.appendChild(chip);
+			chips.set(r.v, chip);
+		});
+		col.append(stack, make("div", "rt-year", String(y)));
+		chart.appendChild(col);
+		columns.set(y, col);
+	}
+
+	function selectRelease(v) {
+		const i = RELEASES.findIndex((r) => r.v === v);
+		if (i < 0) return;
+		const r = RELEASES[i];
+		const prev = RELEASES[i - 1];
+		chips.forEach((el, key) => el.classList.toggle("sel", key === v));
+
+		const head = make("div", "rd-head");
+		head.append(
+			make("span", `rd-badge ${r.era.cls}`, `CUDA ${r.v}`),
+			make("span", "rd-date", `${MONTHS_LONG[r.month - 1]} ${r.year}`),
+		);
+		const series = make(
+			"p",
+			"rd-line",
+			`Series: CUDA ${r.major}.x (${r.era.name})`,
+		);
+		const timing = make(
+			"p",
+			"rd-line",
+			prev
+				? `Timing: ${plural(monthsBetween(prev, r), "month")} after CUDA ${prev.v} (${MONTHS[prev.month - 1]} ${prev.year})`
+				: "Timing: first release in NVIDIA's archive.",
+		);
+		const note = make(
+			"p",
+			"rd-note",
+			r.note ||
+				`Minor update in the ${r.major}.x series. See NVIDIA's release notes for the full change list.`,
+		);
+		detail.replaceChildren(head, series, timing, note);
+	}
+
+	function setYear(y) {
+		const done = RELEASES.filter((r) => r.year <= y);
+		columns.forEach((col, year) => {
+			col.classList.toggle("future", year > y);
+			col.classList.toggle("now", year === y);
+		});
+		$("#rtYearOut").textContent = y;
+		$("#rtCount").textContent = done.length;
+		$("#rtLatest").textContent = done.length
+			? `CUDA ${done[done.length - 1].v}`
+			: "None yet";
+	}
+
+	function stop() {
+		clearInterval(timer);
+		timer = null;
+		playBtn.textContent = "Play timeline";
+	}
+
+	slider.addEventListener("input", () => {
+		stop();
+		setYear(Number(slider.value));
+	});
+
+	playBtn.addEventListener("click", () => {
+		if (timer) {
+			stop();
+			return;
+		}
+		if (Number(slider.value) >= LAST) slider.value = FIRST;
+		playBtn.textContent = "Pause";
+		setYear(Number(slider.value));
+		timer = setInterval(() => {
+			const next = Number(slider.value) + 1;
+			if (next > LAST) {
+				stop();
+				return;
+			}
+			slider.value = next;
+			setYear(next);
+		}, 700);
+	});
+
+	setYear(Number(slider.value));
+	selectRelease("13.5");
+}
+
+/* Full reference list: one row per major version, with every release and its month and year */
+function initVersionTable() {
+	const box = $("#verTable");
+	const majors = [...new Set(RELEASES.map((r) => r.major))];
+	majors.forEach((major) => {
+		const items = RELEASES.filter((r) => r.major === major);
+		const first = items[0].year;
+		const last = items[items.length - 1].year;
+		const span = first === last ? String(first) : `${first} to ${last}`;
+
+		const fam = make("div", "ver-fam");
+		fam.append(
+			make("b", "", `CUDA ${major}.x`),
+			make("span", "", `${span} · ${plural(items.length, "release")}`),
+		);
+
+		const chipBox = make("div", "ver-chips");
+		items.forEach((r) => {
+			const chip = make("span", `vc ${r.era.cls}`);
+			chip.title = r.note || `Minor update in the ${r.major}.x series`;
+			chip.append(
+				make("b", "", r.v),
+				document.createTextNode(` ${MONTHS[r.month - 1]} ${r.year}`),
+			);
+			chipBox.appendChild(chip);
+		});
+
+		const row = make("div", "ver-row");
+		row.append(fam, chipBox);
+		box.appendChild(row);
+	});
+	$("#verTotal").textContent = RELEASES.length;
+}
+
 /* ================= Boot ================= */
 genSquares();
 genDie();
@@ -608,4 +958,6 @@ initThreadDemo();
 initWarp();
 initWorkflow();
 initSimulator();
+initReleaseTimeline();
+initVersionTable();
 show(0);

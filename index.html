@@ -4,10 +4,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="src/style.css">
   <meta name="description"
     content="CUDA presentation: definition, history, CPU vs GPU, architecture, interactive simulation, libraries, alternatives, advantages and limitations." />
   <title>CUDA: Compute Unified Device Architecture | Presentation</title>
+  <link rel="stylesheet" href="src/style.css">
 </head>
 
 <body>
@@ -60,35 +60,35 @@
             <h3>Definition</h3>
           </div>
           <div class="card toc" data-goto="4">
-            <p class="label">Section 02 · Page 4</p>
-            <h3>History</h3>
-          </div>
-          <div class="card toc" data-goto="5">
-            <p class="label">Section 03 · Pages 5-6</p>
-            <h3>CPU vs GPU</h3>
+            <p class="label">Section 02 · Pages 4-6</p>
+            <h3>History and CUDA releases</h3>
           </div>
           <div class="card toc" data-goto="7">
-            <p class="label">Section 04 · Pages 7-8</p>
-            <h3>Architecture and memory</h3>
+            <p class="label">Section 03 · Pages 7-8</p>
+            <h3>CPU vs GPU</h3>
           </div>
           <div class="card toc" data-goto="9">
-            <p class="label">Section 05 · Pages 9-12</p>
+            <p class="label">Section 04 · Pages 9-10</p>
+            <h3>Architecture and memory</h3>
+          </div>
+          <div class="card toc" data-goto="11">
+            <p class="label">Section 05 · Pages 11-14</p>
             <h3>How CUDA works (interactive)</h3>
           </div>
-          <div class="card toc" data-goto="13">
-            <p class="label">Section 06 · Page 13</p>
+          <div class="card toc" data-goto="15">
+            <p class="label">Section 06 · Page 15</p>
             <h3>CUDA libraries</h3>
           </div>
-          <div class="card toc" data-goto="14">
-            <p class="label">Section 07 · Pages 14-15</p>
+          <div class="card toc" data-goto="16">
+            <p class="label">Section 07 · Pages 16-17</p>
             <h3>Alternatives and comparison</h3>
           </div>
-          <div class="card toc" data-goto="16">
-            <p class="label">Section 08 · Pages 16-17</p>
+          <div class="card toc" data-goto="18">
+            <p class="label">Section 08 · Pages 18-19</p>
             <h3>Advantages and limitations</h3>
           </div>
-          <div class="card toc" data-goto="18">
-            <p class="label">Section 09 · Pages 18-19</p>
+          <div class="card toc" data-goto="20">
+            <p class="label">Section 09 · Pages 20-21</p>
             <h3>Conclusion and references</h3>
           </div>
         </div>
@@ -198,6 +198,47 @@
             mature software ecosystem.</div>
         </div>
       </section>
+
+      <!-- 4b. CUDA RELEASES BY YEAR (interactive) -->
+      <section class="slide" data-title="CUDA releases by year">
+        <header class="slide-head">
+          <div>
+            <p class="kicker">02 · History </p>
+            <h2>CUDA Toolkit Releases by Year</h2>
+          </div>
+        </header>
+        <div class="wrap">
+          <div class="rt-top">
+            <div class="rt-legend">
+              <span class="era era-1">Tesla and Fermi</span>
+              <span class="era era-2">Kepler and Maxwell</span>
+              <span class="era era-3">Pascal, Volta and Turing</span>
+              <span class="era era-4">Ampere</span>
+              <span class="era era-5">Hopper and Blackwell</span>
+            </div>
+            <div class="rt-play">
+              <button class="btn primary" id="rtPlay" type="button">Play timeline</button>
+              <label class="rt-slider">Show releases up to <b id="rtYearOut">2026</b>
+                <input type="range" id="rtYear" min="2007" max="2026" value="2026" />
+              </label>
+            </div>
+          </div>
+          <div class="rt-scroll">
+            <div class="rt-chart" id="rtChart"></div>
+          </div>
+          <div class="rt-bottom">
+            <div class="rt-stats">
+              <div class="stat"><b id="rtCount">49</b><span>releases up to the selected year</span></div>
+              <div class="stat"><b id="rtLatest">CUDA 13.5</b><span>newest release so far</span></div>
+            </div>
+            <div class="card rt-detail" id="rtDetail"></div>
+          </div>
+          <p class="note">Each column is one calendar year, and releases stack upward in date order. Click any version
+            for details. Months come from NVIDIA's CUDA Toolkit Archive. Patch releases (for example 12.6 Update 3) are
+            not shown, and the archive has no CUDA 12.7, so 12.6 is followed by 12.8.</p>
+        </div>
+      </section>
+
 
       <!-- 5. CPU vs GPU DESIGN -->
       <section class="slide" data-title="CPU vs GPU design">
@@ -1078,6 +1119,12 @@ int main() {
               Network Computations," in <i>Proc. MAPL Workshop</i>, 2019.</li>
             <li>NVIDIA, <i>cuDNN and cuBLAS Developer Documentation</i>. Available: developer.nvidia.com</li>
             <li>NVIDIA, <i>NVIDIA H100 Tensor Core GPU Datasheet</i>. Available: nvidia.com/data-center</li>
+            <li>NVIDIA, <i>CUDA Toolkit Archive</i>, NVIDIA Developer. Available:
+              developer.nvidia.com/cuda-toolkit-archive (release dates of all CUDA Toolkit versions)</li>
+            <li>NVIDIA, <i>CUDA Toolkit 13.5 Release Notes</i>, NVIDIA Documentation. Available:
+              docs.nvidia.com/cuda/cuda-toolkit-release-notes</li>
+            <li>Wikipedia contributors, "CUDA," <i>Wikipedia, The Free Encyclopedia</i>. Available:
+              en.wikipedia.org/wiki/CUDA</li>
           </ol>
         </div>
       </section>
@@ -1088,13 +1135,13 @@ int main() {
       <button class="btn" id="prev">&larr; Previous</button>
       <div id="dots"></div>
       <div class="foot-right">
-        <span id="counter">01 / 19</span>
+        <span id="counter">01 / 21</span>
         <button class="btn primary" id="next">Next &rarr;</button>
       </div>
     </footer>
   </div>
 
-  <script src="src/main.js"></script>
+  <script type="module" src="src/main.js"></script>
 </body>
 
 </html>
